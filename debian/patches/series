@@ -1,0 +1,4 @@
+docs-disable-ga
+docs-remove-badges
+docs-local-images
+generate-docs-without-virtualenv

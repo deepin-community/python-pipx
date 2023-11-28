@@ -1,0 +1,35 @@
+From: Stefano Rivera <stefanor@debian.org>
+Date: Wed, 29 Sep 2021 20:42:49 -0700
+Subject: docs: Allow generate_docs to run without an installed pipx
+
+Forwarded: https://github.com/pypa/pipx/pull/745
+---
+ scripts/generate_docs.py | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/scripts/generate_docs.py b/scripts/generate_docs.py
+index 26266c9..c1dcc10 100644
+--- a/scripts/generate_docs.py
++++ b/scripts/generate_docs.py
+@@ -3,6 +3,7 @@
+ 
+ import os
+ import subprocess
++import sys
+ import textwrap
+ from typing import Optional
+ 
+@@ -12,10 +13,10 @@ from pipx.main import __version__
+ 
+ 
+ def get_help(pipxcmd: Optional[str]) -> str:
++    cmd = [sys.executable, "-m", "pipx"]
+     if pipxcmd:
+-        cmd = ["pipx", pipxcmd, "--help"]
+-    else:
+-        cmd = ["pipx", "--help"]
++        cmd.append(pipxcmd)
++    cmd.append("--help")
+ 
+     helptext = (
+         subprocess.run(cmd, stdout=subprocess.PIPE, check=True)
