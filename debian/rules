@@ -1,4 +1,23 @@
 #!/usr/bin/make -f
 
 %:
-	dh $@
+	dh $@ --with mkdocs --buildsystem=pybuild
+
+override_dh_auto_build:
+	dh_auto_build
+ifeq (,$(filter nodoc,$(DEB_BUILD_OPTIONS)))
+	COLUMNS=80 PYTHONPATH=src \
+	  python3 scripts/generate_docs.py
+	# material theme isn't packaged in Debian, yet
+	mkdocs build \
+	  --theme mkdocs \
+	  --no-directory-urls \
+	  --site-dir html-docs
+	# Let dh_compress generate a compressed sitemap:
+	rm html-docs/sitemap.xml.gz
+	COLUMNS=80 PYTHONPATH=src \
+	  python3 scripts/generate_man.py
+endif
+
+dh_compress:
+	dh_compress -X.html
